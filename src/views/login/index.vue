@@ -41,43 +41,19 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           console.log("验证成功");
-          login(this.form.username, this.form.password).then(response => {
-            const resp = response.data;
-            console.log(resp, resp.flag, resp.data.token);
-            if (resp.flag) {
-              //验证成功，通过token获取用户信息
-              getUserInfo(resp.data.token).then(response => {
-                const respUser = response.data;
-                if (respUser.flag) {
-                  console.log("userInfo", respUser.data);
-                  //保存token,用户信息
-                  localStorage.setItem(
-                    "zhu-member-user",
-                    JSON.stringify(respUser.data)
-                  );
-                  localStorage.setItem("zhu-member-token", respUser.data.token);
-                  //前往主页
-                  this.$router.push("/");
-                } else {
-                  this.$message({
-                    message: respUser.message,
-                    type: "warning"
-                  });
-                }
-              });
-              this.$message({
-                message: resp.message,
-                type: "success"
-              });
-            } else {
-              //登陆失败，弹出警告
-              //alert(resp.message)
-              this.$message({
-                message: resp.message,
-                type: "warning"
-              });
-            }
-          });
+          const pro = this.$store.dispatch("Login", this.form).then(response => {
+              if (response.flag) {
+                // 前往首页
+                this.$router.push("/");
+              } else {
+                this.$message({
+                  message: response.message,
+                  type: "warning"
+                });
+              }
+            })
+            .catch(error => {});
+          console.log("pro", pro);
         } else {
           console.log("验证失败");
           return false;

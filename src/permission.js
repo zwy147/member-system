@@ -7,10 +7,12 @@
 
 import router from './router'
 import { getUserInfo } from './api/login'
+import store from './store'
 
 router.beforeEach((to, from, next) => {
     //1.获取token
-    const token = localStorage.getItem("zhu-member-token")
+    // const token = localStorage.getItem("zhu-member-token")
+    const token = store.state.user.token
     if (!token) {
         //1.1如果没有获取到，要访问非登录页面，则不让访问，加载到登录页面/login
         if (to.path !== '/login') {
@@ -25,23 +27,22 @@ router.beforeEach((to, from, next) => {
             next()
         } else {
             //1.2.2请求路由非登录页面，先在本地查看是否有用户信息
-            const userInfo = localStorage.getItem("zhu-member-user")
+            // const userInfo = localStorage.getItem("zhu-member-user")
+            const userInfo=store.state.user.user
+            console.log('userInfo',userInfo)
             if (userInfo) {
                 //本地获取到，去目标路由
                 next()
             } else {
                 //如果本地没有用户信息，就通过token获取用户信息
-                getUserInfo(token).then(response => {
-                    const resp = response.data
-                    if (resp.flag) {
-                        //如果获取到用户信息，则进行非登录页面，否则回到登录页面 
-                        //保存到本地
-                        localStorage.setItem("zhu-member-user", JSON.stringify(resp.data))
+                store.dispatch('GetUserInfo').then(response => {
+                    if (response.flag) {
                         next()
                     } else {
-                        //未获取到用户信息，需要重新登录
                         next({ path: '/login' })
                     }
+                }).catch(error => {
+
                 })
             }
         }

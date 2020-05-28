@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 export function login(username,password){
-    return request({
+    return request({//Promise
         url:'/user/login',
         method:'post',
         data:{

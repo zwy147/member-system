@@ -5,6 +5,8 @@ import ElementUI from "element-ui";
 import 'element-ui/lib/theme-chalk/index.css';
 import App from "./App.vue";
 import router from "./router";
+import store from './store/index'
+
 //使用ElementUI
 Vue.use(ElementUI);
 //权限拦截
@@ -14,5 +16,6 @@ console.log(process.env.VUE_APP_SERVICE_URL);//开发环境 development,生产�
 
 new Vue({
   router,
+  store,//注册
   render: h => h(App)
 }).$mount("#app");
